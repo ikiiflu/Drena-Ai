@@ -5,7 +5,7 @@
 @section('content')
 <div class="dash-header">
     <div>
-        <h1 class="dash-header-title">Teste operacional</h1>
+        <h1 class="dash-header-title">Visão operacional</h1>
         <div class="dash-header-meta">
             <span>Território: Central</span>
             <span aria-hidden="true">·</span>
