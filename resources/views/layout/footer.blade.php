@@ -8,12 +8,18 @@
         <div class="statusbar-divider" aria-hidden="true"></div>
         <div class="statusbar-item">
             <span class="statusbar-label">Sensores online</span>
-            <span class="statusbar-value">10/10</span>
+            <span class="statusbar-value">{{ $footerActiveSensors ?? '—' }}/{{ $footerTotalSensors ?? '—' }}</span>
         </div>
         <div class="statusbar-divider" aria-hidden="true"></div>
         <div class="statusbar-item">
             <span class="statusbar-label">Última sincronização</span>
-            <span class="statusbar-value">&lt; 1 min</span>
+            <span class="statusbar-value">
+                @if(!empty($footerLastSync))
+                    {{ \Carbon\Carbon::parse($footerLastSync)->diffForHumans() }}
+                @else
+                    Sem dados
+                @endif
+            </span>
         </div>
     </div>
     <div class="statusbar-right">
