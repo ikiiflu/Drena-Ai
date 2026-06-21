@@ -1,24 +1,35 @@
 @extends('layout.body')
 
-@section('title', 'Drena Aí — Dashboard')
+@section('title', 'AquaSense — Dashboard')
 
 @section('content')
 <div class="dash-header">
     <div>
         <h1 class="dash-header-title">Visão operacional</h1>
         <div class="dash-header-meta">
-            <span>Território: Central</span>
+            <span>Sensores: {{ $metrics['sensors_count'] }}</span>
             <span aria-hidden="true">·</span>
-            <span>Turno: Diurno</span>
+            <span>Alertas ativos: {{ $metrics['alerts_count'] }}</span>
         </div>
     </div>
 </div>
 
-<section class="city-band" id="city-band" aria-label="Faixa de status das regiões da cidade" role="status"
-    aria-live="polite">
+{{-- Faixa de status por região --}}
+<section class="city-band" id="city-band" aria-label="Status das regiões" role="status" aria-live="polite">
+    <div class="city-band-label">Regiões</div>
+    @foreach(['Norte', 'Sul', 'Central', 'Leste', 'Oeste'] as $region)
+        @php $status = $regionStatus->get($region, 'ok'); @endphp
+        <div class="city-band-segment status-{{ $status }}"
+             title="{{ $region }} — {{ $status }}"
+             aria-label="{{ $region }} — {{ $status }}">
+            <div class="city-band-segment-highlight" aria-hidden="true"></div>
+        </div>
+    @endforeach
 </section>
 
+{{-- Cards de métricas --}}
 <section class="metrics-grid" aria-label="Indicadores da rede de drenagem">
+
     <div class="metric-card" role="region" aria-label="Percentual de obstrução médio">
         <div class="metric-card-eyebrow">
             <svg class="metric-card-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -27,11 +38,22 @@
             </svg>
             Obst. média
         </div>
-        <div class="metric-card-value" id="metric-obstruction" aria-live="polite">18%<span class="unit">obstrução</span>
+        <div class="metric-card-value" id="metric-obstruction" aria-live="polite">
+            @if(!is_null($metrics['avg_obstruction']))
+                {{ $metrics['avg_obstruction'] }}%
+            @else
+                —
+            @endif
+            <span class="unit">obstrução</span>
         </div>
         <div class="metric-card-status">
-            <div class="metric-card-status-dot ok" aria-hidden="true"></div>
-            Dentro do limite
+            @php
+                $obs = $metrics['avg_obstruction'] ?? 0;
+                $obsStatus = $obs >= 70 ? 'critico' : ($obs >= 40 ? 'risco' : ($obs >= 10 ? 'atencao' : 'ok'));
+                $obsLabel  = ['ok' => 'Dentro do limite', 'atencao' => 'Atenção', 'risco' => 'Risco elevado', 'critico' => 'Crítico'][$obsStatus];
+            @endphp
+            <div class="metric-card-status-dot {{ $obsStatus }}" aria-hidden="true"></div>
+            {{ $obsLabel }}
         </div>
         <div class="metric-card-spark" aria-hidden="true"></div>
     </div>
@@ -44,10 +66,21 @@
             </svg>
             Precipitação
         </div>
-        <div class="metric-card-value" id="metric-rainfall" aria-live="polite">4.2<span class="unit">mm</span></div>
+        <div class="metric-card-value" id="metric-rainfall" aria-live="polite">
+            @if(!is_null($metrics['avg_rainfall']))
+                {{ $metrics['avg_rainfall'] }}
+            @else
+                —
+            @endif
+            <span class="unit">mm</span>
+        </div>
         <div class="metric-card-status">
+            @php
+                $rain = $metrics['avg_rainfall'] ?? 0;
+                $rainLabel = $rain > 10 ? 'Chuva intensa' : ($rain > 4 ? 'Chuva moderada' : 'Chuva fraca');
+            @endphp
             <div class="metric-card-status-dot ok" aria-hidden="true"></div>
-            Chuva moderada
+            {{ $rainLabel }}
         </div>
         <div class="metric-card-spark" aria-hidden="true"></div>
     </div>
@@ -60,21 +93,50 @@
             </svg>
             Vazão
         </div>
-        <div class="metric-card-value" id="metric-flow" aria-live="polite">378<span class="unit">L/s</span></div>
+        <div class="metric-card-value" id="metric-flow" aria-live="polite">
+            @if(!is_null($metrics['avg_flow']))
+                {{ $metrics['avg_flow'] }}
+            @else
+                —
+            @endif
+            <span class="unit">L/s</span>
+        </div>
         <div class="metric-card-status">
             <div class="metric-card-status-dot ok" aria-hidden="true"></div>
             Fluxo normal
         </div>
         <div class="metric-card-spark" aria-hidden="true"></div>
     </div>
+
 </section>
 
+{{-- Feed de alertas --}}
 <section class="alert-section" aria-label="Central de alertas">
     <div class="alert-header">
         <h2 class="alert-header-title">Alertas recentes</h2>
-        <span class="alert-badge" id="alert-badge" aria-live="polite">0</span>
+        @if($metrics['alerts_count'] > 0)
+            <span class="alert-badge" id="alert-badge" aria-live="polite">{{ $metrics['alerts_count'] }}</span>
+        @endif
     </div>
+
     <ul class="alert-list" id="alert-list" role="log" aria-label="Lista de alertas ativos">
+        @forelse($activeAlerts as $alert)
+            <li class="alert-item">
+                <div class="alert-item-bar {{ $alert->severity }}" aria-hidden="true"></div>
+                <div class="alert-item-body">
+                    <div class="alert-item-location">{{ $alert->sensor->name ?? '—' }}</div>
+                    <div class="alert-item-detail">{{ $alert->message }}</div>
+                    <div class="alert-item-time">{{ $alert->created_at->format('H:i') }}</div>
+                </div>
+                <a href="{{ route('alerts.index') }}" class="alert-item-action">Ver</a>
+            </li>
+        @empty
+            <li class="empty-state">
+                <div class="empty-state-icon">✓</div>
+                <div class="empty-state-title">Nenhum alerta ativo</div>
+                <div class="empty-state-desc">Todos os sensores operam dentro dos parâmetros normais.</div>
+            </li>
+        @endforelse
     </ul>
 </section>
 @stop
