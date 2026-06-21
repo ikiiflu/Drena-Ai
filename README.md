@@ -170,7 +170,7 @@ Infraestrutura: Cloud + Banco de dados temporal
 ### Passo 1 — Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/drena-ai.git
+git clone https://github.com/ikiiflu/drena-ai.git
 cd drena-ai
 ```
 
