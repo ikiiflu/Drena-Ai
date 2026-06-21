@@ -221,51 +221,6 @@ Se desejar popular o banco com dados de exemplo:
 php artisan db:seed
 ```
 
-### Passo 7 — Criar link simbólico de storage
-
-```bash
-php artisan storage:link
-```
-
-### Passo 8 — Compilar os assets
-
-```bash
-npm run dev
-```
-
-Para build de produção:
-
-```bash
-npm run build
-```
-
-### Passo 9 — Iniciar o servidor local
-
-```bash
-php artisan serve
-```
-
-A aplicação estará disponível em:
-`http://localhost:8000`
-
-### Passo 10 (opcional) — Filas e jobs em tempo real
-
-Se o projeto utilizar filas para processamento de alertas e leituras de sensores:
-
-```bash
-php artisan queue:work
-```
-
-### Passo 11 (opcional) — Broadcast em tempo real
-
-Caso o monitoramento em tempo real utilize WebSockets (Laravel Echo / Pusher / Soketi):
-
-```bash
-php artisan reverb:start
-```
-
----
-
 ### Checklist rápido
 
 * [ ] `.env` configurado
