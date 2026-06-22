@@ -2,6 +2,26 @@
 
 @section('title', 'AquaSense - Alertas')
 
+@push('styles')
+<style>
+.alerts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    padding: 0 1.5rem 2rem;
+    height: calc(100vh - 10rem);
+}
+@media (max-width: 960px) {
+    .alerts-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 0;
+        padding: 0 0 2rem;
+    }
+}
+</style>
+@endpush
+
 @section('content')
 <div class="dash-header">
     <div>
@@ -21,7 +41,7 @@
 @endif
 
 {{-- Layout de dois cards lado a lado --}}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;padding:0 1.5rem 2rem;height:calc(100vh - 10rem)">
+<div class="alerts-grid">
 
     {{-- Card: Alertas ativos --}}
     <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden">

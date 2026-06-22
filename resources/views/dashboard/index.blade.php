@@ -2,6 +2,30 @@
 
 @section('title', 'AquaSense - Dashboard')
 
+@push('styles')
+<style>
+.dash-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+.dash-panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    min-height: 0;
+    flex: 1;
+}
+@media (max-width: 960px) {
+    .dash-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+    .dash-metrics-grid { grid-template-columns: 1fr; }
+    .dash-panels-grid  { grid-template-columns: 1fr; }
+}
+</style>
+@endpush
+
 @section('content')
 @php
     $statusColors = ['ok'=>'#10B981','atencao'=>'#F59E0B','risco'=>'#F97316','critico'=>'#EF4444'];
@@ -76,7 +100,7 @@
 @endif
 
 {{-- ── Três cards de métrica ────────────────────────────────────────── --}}
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+<div class="dash-metrics-grid">
 
     {{-- Obstrução --}}
     @php $c = $statusColors[$obsSt]; $g = $statusGlows[$obsSt]; @endphp
@@ -132,7 +156,7 @@
 </div>
 
 {{-- ── Dois painéis inferiores ──────────────────────────────────────── --}}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;min-height:0;flex:1">
+<div class="dash-panels-grid">
 
     {{-- Alertas recentes --}}
     <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;min-height:200px">

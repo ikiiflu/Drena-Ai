@@ -2,14 +2,32 @@
 
 @section('title', 'AquaSense - Mapa Operacional')
 
+@push('styles')
+<style>
+.map-full {
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.map-hint-pill { display: block; }
+@media (max-width: 960px) {
+    .map-full { height: calc(100vh - 168px); } /* 120 + 48 topbar */
+    .map-hint-pill { display: none; }
+    .map-overlay-top { flex-wrap: wrap; gap: 6px; }
+    .map-pill { font-size: 0.7rem; padding: 4px 10px; }
+}
+</style>
+@endpush
+
 @section('content')
-    <div class="map-section" style="height: calc(100vh - 120px); display: flex; flex-direction: column; position: relative;">
+    <div class="map-section map-full">
         <div class="map-overlay-top">
             <div class="map-pill" id="map-sensor-count" aria-label="Sensores no mapa">{{ $sensors->count() }} sensores</div>
             <div class="map-pill" id="map-time" aria-live="off">--:--</div>
-            <div class="map-pill" style="color:var(--flow);font-size:0.72rem">Clique no mapa para adicionar um sensor</div>
-            <button onclick="openBairrosModal()" class="map-pill" style="cursor:pointer;border:1px solid var(--line);background:var(--panel)">Gerenciar Bairros</button>
-            <button onclick="openEnderecoModal()" class="map-pill" style="cursor:pointer;border:1px solid var(--line);background:var(--panel)">Gerenciar Endereços</button>
+            <div class="map-pill map-hint-pill" style="color:var(--flow);font-size:0.72rem">Clique no mapa para adicionar um sensor</div>
+            <button onclick="openBairrosModal()" class="map-pill" style="cursor:pointer;border:1px solid var(--line);background:var(--panel)">Bairros</button>
+            <button onclick="openEnderecoModal()" class="map-pill" style="cursor:pointer;border:1px solid var(--line);background:var(--panel)">Endereços</button>
         </div>
         <div id="city-map" class="map-container" style="flex: 1; min-height: 100%;"></div>
     </div>
