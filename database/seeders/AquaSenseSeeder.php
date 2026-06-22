@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Database\Seeders;
 
@@ -51,18 +51,18 @@ class AquaSenseSeeder extends Seeder
         $esplanada = Bairro::where('nome', 'Esplanada')->first();
         $zacarias  = Bairro::where('nome', 'Zacarias')->first();
 
-        $avOlegario       = Endereco::where('logradouro', 'Av. Olegário Maciel')->first();
-        $avCatarina       = Endereco::where('logradouro', 'Av. Catarina Cimini')->first();
-        $avAnaPena        = Endereco::where('logradouro', 'Av. Ana Pena de Faria')->first();
-        $ruaSantuario     = Endereco::where('logradouro', 'Rua do Santuário')->first();
-        $ruaManoel        = Endereco::where('logradouro', 'Rua Manoel Gonçalves de Castro')->first();
-        $ruaRaimundo      = Endereco::where('logradouro', 'Rua Raimundo Cimini')->first();
-        $pracaCesario     = Endereco::where('logradouro', 'Praça Cesário Alvim')->first();
-        $avMoacir         = Endereco::where('logradouro', 'Av. Moacir de Matos')->first();
-        $avJoaoCaetano    = Endereco::where('logradouro', 'Av. João Caetano do Nascimento')->first();
-        $ruaCoronelPedro  = Endereco::where('logradouro', 'Rua Coronel Pedro Martins')->first();
-        $ruaDonaZeca      = Endereco::where('logradouro', 'Rua Dona Zeca Chagas')->first();
-        $ruaLuizAntonio   = Endereco::where('logradouro', 'Rua Luiz Antônio Cortes')->first();
+        $avOlegario      = Endereco::where('logradouro', 'Av. Olegário Maciel')->first();
+        $avCatarina      = Endereco::where('logradouro', 'Av. Catarina Cimini')->first();
+        $avAnaPena       = Endereco::where('logradouro', 'Av. Ana Pena de Faria')->first();
+        $ruaSantuario    = Endereco::where('logradouro', 'Rua do Santuário')->first();
+        $ruaManoel       = Endereco::where('logradouro', 'Rua Manoel Gonçalves de Castro')->first();
+        $ruaRaimundo     = Endereco::where('logradouro', 'Rua Raimundo Cimini')->first();
+        $pracaCesario    = Endereco::where('logradouro', 'Praça Cesário Alvim')->first();
+        $avMoacir        = Endereco::where('logradouro', 'Av. Moacir de Matos')->first();
+        $avJoaoCaetano   = Endereco::where('logradouro', 'Av. João Caetano do Nascimento')->first();
+        $ruaCoronelPedro = Endereco::where('logradouro', 'Rua Coronel Pedro Martins')->first();
+        $ruaDonaZeca     = Endereco::where('logradouro', 'Rua Dona Zeca Chagas')->first();
+        $ruaLuizAntonio  = Endereco::where('logradouro', 'Rua Luiz Antônio Cortes')->first();
 
         // ── Sensores ───────────────────────────────────────────────────────────
         $sensors = [
