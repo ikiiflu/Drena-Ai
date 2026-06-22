@@ -93,7 +93,12 @@
 
     function doRefresh() {
       localStorage.setItem(STORAGE_KEY, Date.now() + REFRESH_INTERVAL_MS);
-      location.reload();
+      // Solicita geração de leitura (sem force — gerarSeNecessario respeita intervalo_leitura_seg).
+      // O cron é o fallback quando o navegador está fechado.
+      fetch("/api/leituras/gerar", {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": CSRF_TOKEN, "Content-Type": "application/json" }
+      }).finally(function () { location.reload(); });
     }
 
     setInterval(function () {
