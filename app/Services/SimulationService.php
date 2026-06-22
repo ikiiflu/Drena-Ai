@@ -45,6 +45,7 @@ class SimulationService
         // Determina intensidade da chuva pelo modo
         $tempestade = match ($modo) {
             'tempestade'  => true,
+            'sem_chuva'   => false,
             'chuva_forte' => false,
             'chuva_fraca' => false,
             default       => ($hora >= 14 && $hora <= 18), // normal: simula período de chuva à tarde
