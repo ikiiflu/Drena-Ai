@@ -1,11 +1,10 @@
 /**
  * AquaSense – script do frontend
- * Responsável por: relógio, geração de leituras em background,
- * atualização dos cards de métricas (/api/sensors), dots de status
- * da sidebar e recarga automática global da página (modo automático).
+ * Responsável por: relógio, atualização dos cards de métricas (/api/sensors),
+ * dots de status da sidebar e recarga automática global da página.
  *
  * Geração de leituras:
- *   - Browser aberto: gerada a cada intervalo_leitura_seg (ambos os modos)
+ *   - Browser aberto: gerada e página recarregada a cada intervalo_atualizacao_seg
  *   - Browser fechado: cron (schedule:run) como fallback
  */
 
@@ -17,10 +16,8 @@
     return el ? el.content : fallback;
   };
 
-  var CSRF_TOKEN           = metaGet("csrf-token", "");
-  var REFRESH_MODE         = metaGet("refresh-mode", "manual");
-  var REFRESH_INTERVAL_MS  = parseInt(metaGet("refresh-interval", "60"), 10) * 1000;
-  var READING_INTERVAL_MS  = parseInt(metaGet("reading-interval", "60"), 10) * 1000;
+  var CSRF_TOKEN          = metaGet("csrf-token", "");
+  var REFRESH_INTERVAL_MS = parseInt(metaGet("refresh-interval", "60"), 10) * 1000;
 
   // ---- Relógio ----
   var clockEl = document.getElementById("statusbar-clock");
@@ -29,34 +26,6 @@
     clockEl.textContent = new Date().toLocaleTimeString("pt-BR", {
       hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
     });
-  }
-
-  // ---- Geração de leitura em background (ambos os modos) ----
-  function generateReading() {
-    fetch("/api/leituras/gerar", {
-      method: "POST",
-      headers: { "X-CSRF-TOKEN": CSRF_TOKEN, "Content-Type": "application/json" },
-      body: JSON.stringify({ force: true })
-    }).then(function () {
-      fetchMetrics();
-    }).catch(function (err) { console.warn("AquaSense: erro ao gerar leitura:", err); });
-  }
-
-  // ---- Última sinc. ----
-  var lastSyncEl = document.getElementById("statusbar-last-sync");
-  var lastSyncTs = null;
-
-  function timeAgo(isoString) {
-    var diff = Math.round((Date.now() - new Date(isoString).getTime()) / 1000);
-    if (diff < 60)  return "há " + diff + (diff === 1 ? " segundo" : " segundos");
-    var m = Math.round(diff / 60);
-    if (m < 60)     return "há " + m + (m === 1 ? " minuto" : " minutos");
-    var h = Math.round(m / 60);
-    return "há " + h + (h === 1 ? " hora" : " horas");
-  }
-
-  function tickLastSync() {
-    if (lastSyncEl && lastSyncTs) lastSyncEl.textContent = timeAgo(lastSyncTs);
   }
 
   // ---- Fetch sensores e atualiza cards ----
@@ -81,13 +50,6 @@
         if (metricObs)   metricObs.innerHTML   = avgObs.toFixed(1)  + '<span style="font-size:1.4rem;opacity:0.7">%</span>';
         if (metricChuva) metricChuva.innerHTML = avgRain.toFixed(1) + '<span style="font-size:1.4rem;opacity:0.7"> mm</span>';
         if (metricVazao) metricVazao.innerHTML = avgFlow.toFixed(1) + '<span style="font-size:1.4rem;opacity:0.7"> L/s</span>';
-
-        // Atualiza timestamp da última sinc. com o registro mais recente
-        var timestamps = readings.map(function (r) { return r.registrado_em; }).filter(Boolean);
-        if (timestamps.length) {
-          lastSyncTs = timestamps.reduce(function (a, b) { return a > b ? a : b; });
-          tickLastSync();
-        }
 
         updateSidebarDots(sensors);
       })
@@ -141,13 +103,12 @@
     });
   });
 
-  // ---- Recarga automática global (modo automático) ----
-  var isMapPage = window.location.pathname === "/map";
+  // ---- Recarga automática global ----
+  var isMapPage   = window.location.pathname === "/map";
+  var countdownEl = document.getElementById("next-refresh-countdown");
+  var STORAGE_KEY = "aquasense_next_refresh";
 
-  if (!isMapPage && REFRESH_MODE === "automatico" && REFRESH_INTERVAL_MS >= 5000) {
-
-    var countdownEl = document.getElementById("next-refresh-countdown");
-    var STORAGE_KEY = "aquasense_next_refresh";
+  if (!isMapPage && REFRESH_INTERVAL_MS >= 5000) {
 
     var now    = Date.now();
     var nextAt = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
@@ -158,7 +119,11 @@
 
     function doRefresh() {
       localStorage.setItem(STORAGE_KEY, Date.now() + REFRESH_INTERVAL_MS);
-      location.reload();
+      fetch("/api/leituras/gerar", {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": CSRF_TOKEN, "Content-Type": "application/json" },
+        body: JSON.stringify({ force: true })
+      }).finally(function () { location.reload(); });
     }
 
     setInterval(function () {
@@ -179,8 +144,7 @@
   tickClock();
   fetchMetrics();
 
-  setInterval(tickClock,       1000);
-  setInterval(tickLastSync,    1000);
-  setInterval(generateReading, READING_INTERVAL_MS);
+  setInterval(tickClock,    1000);
+  setInterval(fetchMetrics, 30000);
 
 })();

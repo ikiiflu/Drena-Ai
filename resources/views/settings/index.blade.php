@@ -85,25 +85,13 @@
     {{-- Atualização da página --}}
     <section class="settings-section">
         <h2 class="settings-section-title">Atualização da página</h2>
-        @php $modoAtu = old('modo_atualizacao', $settings->get('modo_atualizacao')?->valor ?? 'manual'); @endphp
 
         <div class="settings-field">
             <label class="settings-label">
-                Modo de atualização
-                <span class="settings-hint">No modo automático a página recarrega no intervalo definido.</span>
+                Intervalo de atualização
+                <span class="settings-hint">A página recarrega automaticamente no intervalo definido.</span>
             </label>
-            <div style="display:flex;gap:0.5rem;margin-bottom:1rem">
-                <label style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.9rem;border-radius:8px;border:1.5px solid {{ $modoAtu === 'manual' ? 'var(--flow)' : 'var(--line)' }};cursor:pointer">
-                    <input type="radio" name="modo_atualizacao" value="manual" {{ $modoAtu === 'manual' ? 'checked' : '' }} style="accent-color:var(--flow)" onchange="document.getElementById('refresh-interval-row').style.display='none'">
-                    <span style="font-size:0.82rem;font-weight:600;color:var(--ink)">Manual</span>
-                </label>
-                <label style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.9rem;border-radius:8px;border:1.5px solid {{ $modoAtu === 'automatico' ? 'var(--flow)' : 'var(--line)' }};cursor:pointer">
-                    <input type="radio" name="modo_atualizacao" value="automatico" {{ $modoAtu === 'automatico' ? 'checked' : '' }} style="accent-color:var(--flow)" onchange="document.getElementById('refresh-interval-row').style.display='flex'">
-                    <span style="font-size:0.82rem;font-weight:600;color:var(--ink)">Automático</span>
-                </label>
-            </div>
-
-            <div id="refresh-interval-row" style="display:{{ $modoAtu === 'automatico' ? 'flex' : 'none' }};align-items:center;gap:0.75rem;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
                 <input type="number" id="intervalo_atualizacao_seg" name="intervalo_atualizacao_seg"
                     value="{{ old('intervalo_atualizacao_seg', $settings->get('intervalo_atualizacao_seg')?->valor ?? 60) }}"
                     min="30" max="3600" class="settings-input" style="width:120px">

@@ -23,13 +23,11 @@
         </div>
     </div>
     <div class="statusbar-right">
-        @if(\App\Models\Setting::get('modo_atualizacao', 'manual') === 'automatico')
         <div class="statusbar-item">
             <span class="statusbar-label">Próx. atualização</span>
             <span class="statusbar-value" id="next-refresh-countdown" style="color:var(--flow)">--</span>
         </div>
         <div class="statusbar-divider" aria-hidden="true"></div>
-        @endif
         <div class="statusbar-item">
             <span class="statusbar-label">Hora local</span>
             <span class="statusbar-value" id="statusbar-clock">--:--</span>
