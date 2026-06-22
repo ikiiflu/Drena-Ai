@@ -42,6 +42,23 @@
     }).catch(function (err) { console.warn("AquaSense: erro ao gerar leitura:", err); });
   }
 
+  // ---- Última sinc. ----
+  var lastSyncEl = document.getElementById("statusbar-last-sync");
+  var lastSyncTs = null;
+
+  function timeAgo(isoString) {
+    var diff = Math.round((Date.now() - new Date(isoString).getTime()) / 1000);
+    if (diff < 60)  return "há " + diff + (diff === 1 ? " segundo" : " segundos");
+    var m = Math.round(diff / 60);
+    if (m < 60)     return "há " + m + (m === 1 ? " minuto" : " minutos");
+    var h = Math.round(m / 60);
+    return "há " + h + (h === 1 ? " hora" : " horas");
+  }
+
+  function tickLastSync() {
+    if (lastSyncEl && lastSyncTs) lastSyncEl.textContent = timeAgo(lastSyncTs);
+  }
+
   // ---- Fetch sensores e atualiza cards ----
   var metricObs   = document.getElementById("metric-obstruction");
   var metricChuva = document.getElementById("metric-rainfall");
@@ -64,6 +81,13 @@
         if (metricObs)   metricObs.innerHTML   = avgObs.toFixed(1)  + '<span style="font-size:1.4rem;opacity:0.7">%</span>';
         if (metricChuva) metricChuva.innerHTML = avgRain.toFixed(1) + '<span style="font-size:1.4rem;opacity:0.7"> mm</span>';
         if (metricVazao) metricVazao.innerHTML = avgFlow.toFixed(1) + '<span style="font-size:1.4rem;opacity:0.7"> L/s</span>';
+
+        // Atualiza timestamp da última sinc. com o registro mais recente
+        var timestamps = readings.map(function (r) { return r.registrado_em; }).filter(Boolean);
+        if (timestamps.length) {
+          lastSyncTs = timestamps.reduce(function (a, b) { return a > b ? a : b; });
+          tickLastSync();
+        }
 
         updateSidebarDots(sensors);
       })
@@ -156,6 +180,7 @@
   fetchMetrics();
 
   setInterval(tickClock,       1000);
+  setInterval(tickLastSync,    1000);
   setInterval(generateReading, READING_INTERVAL_MS);
 
 })();

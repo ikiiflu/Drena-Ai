@@ -13,7 +13,7 @@
         <div class="statusbar-divider" aria-hidden="true"></div>
         <div class="statusbar-item">
             <span class="statusbar-label">Última sinc.</span>
-            <span class="statusbar-value">
+            <span class="statusbar-value" id="statusbar-last-sync">
                 @if($footerLastSync)
                     {{ $footerLastSync->diffForHumans() }}
                 @else
