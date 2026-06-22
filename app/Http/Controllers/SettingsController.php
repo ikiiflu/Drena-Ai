@@ -31,6 +31,9 @@ class SettingsController extends Controller
             Setting::set($chave, $valor);
         }
 
+        // Mantém intervalo_leitura_seg em sincronia com intervalo_atualizacao_seg
+        Setting::set('intervalo_leitura_seg', $validated['intervalo_atualizacao_seg']);
+
         return redirect()->route('settings.index')
             ->with('success', 'Configurações salvas com sucesso.');
     }

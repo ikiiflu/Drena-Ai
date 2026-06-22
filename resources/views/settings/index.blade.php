@@ -26,32 +26,6 @@
 <form method="POST" action="{{ route('settings.update') }}" style="padding:0 1.5rem 2rem">
     @csrf
 
-    {{-- Coleta de dados --}}
-    <section class="settings-section">
-        <h2 class="settings-section-title">Coleta de dados</h2>
-
-        <div class="settings-field">
-            <label for="intervalo_leitura_seg" class="settings-label">
-                Intervalo entre leituras
-                <span class="settings-hint">Tempo (em segundos) entre cada coleta automática de todos os sensores.</span>
-            </label>
-            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                <input type="number" id="intervalo_leitura_seg" name="intervalo_leitura_seg"
-                    value="{{ old('intervalo_leitura_seg', $settings->get('intervalo_leitura_seg')?->valor ?? 60) }}"
-                    min="10" max="86400" class="settings-input" style="width:120px">
-                <span style="font-size:0.8rem;color:var(--ink-dim)">segundos</span>
-                <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
-                    @foreach([['30','30 s'],['60','1 min'],['300','5 min'],['600','10 min'],['1800','30 min'],['3600','1 h']] as [$val,$lbl])
-                        <button type="button" onclick="document.getElementById('intervalo_leitura_seg').value='{{ $val }}'" class="settings-quick-btn">{{ $lbl }}</button>
-                    @endforeach
-                </div>
-            </div>
-            @error('intervalo_leitura_seg')
-                <p style="color:var(--status-critico);font-size:0.75rem;margin-top:0.4rem">{{ $message }}</p>
-            @enderror
-        </div>
-    </section>
-
     {{-- Modo de simulação --}}
     <section class="settings-section">
         <h2 class="settings-section-title">Modo de simulação de chuva</h2>
@@ -88,8 +62,8 @@
 
         <div class="settings-field">
             <label class="settings-label">
-                Intervalo de atualização
-                <span class="settings-hint">A página recarrega automaticamente no intervalo definido.</span>
+                Intervalo de leitura e atualização
+                <span class="settings-hint">Tempo entre cada coleta dos sensores e recarga automática da página.</span>
             </label>
             <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
                 <input type="number" id="intervalo_atualizacao_seg" name="intervalo_atualizacao_seg"
