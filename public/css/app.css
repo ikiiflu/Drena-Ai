@@ -1056,6 +1056,10 @@ button,
     align-items: center;
   }
 
+  .app-main {
+    grid-column: 1;
+  }
+
   .app-statusbar {
     grid-column: 1;
   }
