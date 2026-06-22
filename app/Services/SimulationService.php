@@ -71,6 +71,7 @@ class SimulationService
         // Drenagem progressiva: quanto mais obstruído, maior a força de limpeza natural
         $drenagem  = $obstrucaoPrev > 70 ? ($obstrucaoPrev - 70) / 100 : 0.0;
         $delta     = (mt_rand(0, 100) / 100 - 0.45) * 5 + $tendencia - $drenagem;
+        if ($semChuva) $delta = min($delta, 0.0);
         $obstrucao = max(0.0, min(100.0, (float) $obstrucaoPrev + $delta));
 
         // Precipitação conforme modo (normal usa variação por horário à tarde)
